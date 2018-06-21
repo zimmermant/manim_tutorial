@@ -107,3 +107,84 @@ class RotateAndHighlight(Scene):
         self.play(FadeIn(label_group))
         self.play(FadeIn(label2_group))
         self.play(FadeIn(label3))
+
+class BasicEquations(Scene):
+    #A short script showing how to use Latex commands
+    def construct(self):
+        eq1=TextMobject("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
+        eq1.shift(2*UP)
+        eq2=TexMobject("\\vec{F}_{net} = \\sum_i \\vec{F}_i")
+        eq2.shift(2*DOWN)
+
+        self.play(Write(eq1))
+        self.play(Write(eq2))
+
+class ColoringEquations(Scene):
+    #Grouping and coloring parts of equations
+    def construct(self):
+        line1=TexMobject("\\text{The vector }", "\\vec{F}_{net}", "\\text{ is the net force on object of mass }")
+        line1.set_color_by_tex("force", BLUE)
+        line2=TexMobject("m", "\\text{ and acceleration }", "\\vec{a}", ".  ")
+        line2.set_color_by_tex_to_color_map({
+            "m": YELLOW,
+            "{a}": RED
+        })
+        sentence=VGroup(line1,line2)
+        sentence.arrange_submobjects(DOWN, buff=MED_LARGE_BUFF)
+        self.play(Write(sentence))
+
+class UsingBraces(Scene):
+    #Using braces to group text together
+    def construct(self):
+        eq1A = TextMobject("4x + 3y")
+        eq1B = TextMobject("=")
+        eq1C = TextMobject("0")
+        eq2A = TextMobject("5x -2y")
+        eq2B = TextMobject("=")
+        eq2C = TextMobject("3")
+        eq1B.next_to(eq1A,RIGHT)
+        eq1C.next_to(eq1B,RIGHT)
+        eq2A.shift(DOWN)
+        eq2B.shift(DOWN)
+        eq2C.shift(DOWN)
+        eq2A.align_to(eq1A,LEFT)
+        eq2B.align_to(eq1B,LEFT)
+        eq2C.align_to(eq1C,LEFT)
+
+        eq_group=VGroup(eq1A,eq2A)
+        braces=Brace(eq_group,LEFT)
+        eq_text = braces.get_text("A pair of equations")
+
+        self.add(eq1A, eq1B, eq1C)
+        self.add(eq2A, eq2B, eq2C)
+        self.play(GrowFromCenter(braces),Write(eq_text))
+
+
+class UsingBracesConcise(Scene):
+    #A more concise block of code with all columns aligned
+    def construct(self):
+        eq1_text=["4","x","+","3","y","=","0"]
+        eq2_text=["5","x","-","2","y","=","3"]
+        eq1_mob=TexMobject(*eq1_text)
+        eq2_mob=TexMobject(*eq2_text)
+        eq1_mob.set_color_by_tex_to_color_map({
+            "x":RED_B,
+            "y":GREEN_C
+            })
+        eq2_mob.set_color_by_tex_to_color_map({
+            "x":RED_B,
+            "y":GREEN_C
+            })
+        for i,item in enumerate(eq2_mob):
+            item.align_to(eq1_mob[i],LEFT)
+        eq1=VGroup(*eq1_mob)
+        eq2=VGroup(*eq2_mob)
+        eq2.shift(DOWN)
+        eq_group=VGroup(eq1,eq2)
+        braces=Brace(eq_group,LEFT)
+        eq_text = braces.get_text("A pair of equations")
+
+        self.play(Write(eq1),Write(eq2))
+        self.play(GrowFromCenter(braces),Write(eq_text))
+
+
