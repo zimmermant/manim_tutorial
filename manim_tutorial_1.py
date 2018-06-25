@@ -224,7 +224,6 @@ class PlotFunctions(GraphScene):
 
 
 class ExampleApproximation(GraphScene):
-    #Post number 8 in manim tutorial series
     CONFIG = {
         "function" : lambda x : np.cos(x), 
         "function_color" : BLUE,
@@ -257,11 +256,11 @@ class ExampleApproximation(GraphScene):
         term_num = [
             TexMobject("n = " + str(n),aligned_edge=TOP)
             for n in range(0,8)]
-        for i in term_num:
-            i.to_edge(BOTTOM)
-            
+        [t.to_edge(BOTTOM,buff=SMALL_BUFF) for t in term_num]
+
+
         term = TexMobject("")
-        term.to_edge(BOTTOM)
+        term.to_edge(BOTTOM,buff=SMALL_BUFF)
 
         approx_graph = VectorizedPoint(
             self.input_to_graph_point(self.center_point, func_graph)
@@ -276,5 +275,3 @@ class ExampleApproximation(GraphScene):
                 Transform(term,term_num[n])
             )
             self.wait()
-
-
