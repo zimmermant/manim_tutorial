@@ -428,6 +428,173 @@ class EFieldInThreeD(ThreeDScene):
         x,y,z = point
         Rx,Ry,Rz = self.point_charge_loc
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2+(z-Rz)**2)
-        #efield = (point - self.point_charge_loc)/r**3
-        efield = np.array((-y,x,z))/math.sqrt(x**2+y**2+z**2)
+        efield = (point - self.point_charge_loc)/r**3
+        #efield = np.array((-y,x,z))/math.sqrt(x**2+y**2+z**2)
         return Vector(efield).shift(point)
+
+
+class MovingCharges(Scene):
+    CONFIG = {
+    "plane_kwargs" : {
+        "color" : RED_B
+        },
+    "point_charge_loc" : 0.5*RIGHT-1.5*UP,
+    }
+    def construct(self):
+        plane = NumberPlane(**self.plane_kwargs)
+        plane.main_lines.fade(.9)
+        plane.add(plane.get_axis_labels())
+        self.add(plane)
+
+        field = VGroup(*[self.calc_field(x*RIGHT+y*UP)
+            for x in np.arange(-9,9,1)
+            for y in np.arange(-5,5,1)
+            ])
+        self.field=field
+        source_charge = self.Positron().move_to(self.point_charge_loc)
+        self.play(FadeIn(source_charge))
+        self.play(ShowCreation(field))
+        self.moving_charge()
+
+    def calc_field(self,point):
+        x,y = point[:2]
+        Rx,Ry = self.point_charge_loc[:2]
+        r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
+        efield = (point - self.point_charge_loc)/r**3
+        return Vector(efield).shift(point)
+
+    def moving_charge(self):
+        numb_charges=4
+        possible_points = [v.get_start() for v in self.field]
+        points = random.sample(possible_points, numb_charges)
+        particles = VGroup(*[
+            self.Positron().move_to(point)
+            for point in points
+        ])
+        for particle in particles:
+            particle.velocity = np.array((0,0,0))
+
+        self.play(FadeIn(particles))
+        self.moving_particles = particles
+        self.add_foreground_mobjects(self.moving_particles )
+        self.always_continually_update = True
+        self.wait(10)
+
+    def field_at_point(self,point):
+        x,y = point[:2]
+        Rx,Ry = self.point_charge_loc[:2]
+        r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
+        efield = (point - self.point_charge_loc)/r**3
+        return efield
+
+    def continual_update(self, *args, **kwargs):
+        if hasattr(self, "moving_particles"):
+            dt = self.frame_duration
+            for p in self.moving_particles:
+                accel = self.field_at_point(p.get_center())
+                p.velocity = p.velocity + accel*dt
+                p.shift(p.velocity*dt)
+
+
+    class Positron(Circle):
+        CONFIG = {
+        "radius" : 0.2,
+        "stroke_width" : 3,
+        "color" : RED,
+        "fill_color" : RED,
+        "fill_opacity" : 0.5,
+        }
+        def __init__(self, **kwargs):
+            Circle.__init__(self, **kwargs)
+            plus = TexMobject("+")
+            plus.scale(0.7)
+            plus.move_to(self)
+            self.add(plus)
+
+class FieldOfMovingCharge(Scene):
+    CONFIG = {
+    "plane_kwargs" : {
+        "color" : RED_B
+        },
+    "point_charge_start_loc" : 5.5*LEFT-1.5*UP,
+    }
+    def construct(self):
+        plane = NumberPlane(**self.plane_kwargs)
+        plane.main_lines.fade(.9)
+        plane.add(plane.get_axis_labels())
+        self.add(plane)
+
+        field = VGroup(*[self.create_vect_field(self.point_charge_start_loc,x*RIGHT+y*UP)
+            for x in np.arange(-9,9,1)
+            for y in np.arange(-5,5,1)
+            ])
+        self.field=field
+        self.source_charge = self.Positron().move_to(self.point_charge_start_loc)
+        self.source_charge.velocity = np.array((1,0,0))
+        self.play(FadeIn(self.source_charge))
+        self.play(ShowCreation(field))
+        self.moving_charge()
+
+    def create_vect_field(self,source_charge,observation_point):
+        return Vector(self.calc_field(source_charge,observation_point)).shift(observation_point)
+
+    def calc_field(self,source_point,observation_point):
+        x,y,z = observation_point
+        Rx,Ry,Rz = source_point
+        r = math.sqrt((x-Rx)**2 + (y-Ry)**2 + (z-Rz)**2)
+        if r<0.0000001:   #Prevent divide by zero
+            efield = np.array((0,0,0))  
+        else:
+            efield = (observation_point - source_point)/r**3
+        return efield
+
+
+
+    def moving_charge(self):
+        numb_charges=3
+        possible_points = [v.get_start() for v in self.field]
+        points = random.sample(possible_points, numb_charges)
+        particles = VGroup(self.source_charge, *[
+            self.Positron().move_to(point)
+            for point in points
+        ])
+        for particle in particles[1:]:
+            particle.velocity = np.array((0,0,0))
+        self.play(FadeIn(particles[1:]))
+        self.moving_particles = particles
+        self.add_foreground_mobjects(self.moving_particles )
+        self.always_continually_update = True
+        self.wait(10)
+
+
+    def continual_update(self, *args, **kwargs):
+        Scene.continual_update(self, *args, **kwargs)
+        if hasattr(self, "moving_particles"):
+            dt = self.frame_duration
+
+            for v in self.field:
+                field_vect=np.zeros(3)
+                for p in self.moving_particles:
+                    field_vect = field_vect + self.calc_field(p.get_center(), v.get_start())
+                v.put_start_and_end_on(v.get_start(), field_vect+v.get_start())
+
+            for p in self.moving_particles:
+                accel = np.zeros(3)
+                p.velocity = p.velocity + accel*dt
+                p.shift(p.velocity*dt)
+
+
+    class Positron(Circle):
+        CONFIG = {
+        "radius" : 0.2,
+        "stroke_width" : 3,
+        "color" : RED,
+        "fill_color" : RED,
+        "fill_opacity" : 0.5,
+        }
+        def __init__(self, **kwargs):
+            Circle.__init__(self, **kwargs)
+            plus = TexMobject("+")
+            plus.scale(0.7)
+            plus.move_to(self)
+            self.add(plus)
