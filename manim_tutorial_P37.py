@@ -1,4 +1,8 @@
 from big_ol_pile_of_manim_imports import *
+import os
+import pyclbr
+
+
 
 class Shapes(Scene):
     #A few simple shapes
@@ -69,6 +73,9 @@ class AddingText(Scene):
         self.wait(2)
         second_line.shift(3*DOWN)
         self.play(ApplyMethod(my_first_text.shift,3*UP))
+        ###Try uncommenting the following###
+        #self.play(ApplyMethod(second_line.move_to, LEFT_SIDE-2*LEFT))
+        #self.play(ApplyMethod(my_first_text.next_to,second_line))
 
 
 class AddingMoreText(Scene):
@@ -87,7 +94,8 @@ class AddingMoreText(Scene):
         self.add(author)
         self.wait(2)
         self.play(Transform(quote,quote2),ApplyMethod(author.move_to,quote2.get_corner(DOWN+RIGHT)+DOWN+2*LEFT))
-        self.play(ApplyMethod(author.match_color,quote2),Transform(author,author.scale(1)))
+        self.play(ApplyMethod(author.scale,1.5))
+        author.match_color(quote2)
         self.play(FadeOut(quote))
 
 class RotateAndHighlight(Scene):
@@ -117,7 +125,7 @@ class BasicEquations(Scene):
     def construct(self):
         eq1=TextMobject("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
         eq1.shift(2*UP)
-        eq2=TexMobject("\\vec{F}_{net} = \\sum_i \\vec{F}_i")
+        eq2=TexMobject(r"\vec{F}_{net} = \sum_i \vec{F}_i")
         eq2.shift(2*DOWN)
 
         self.play(Write(eq1))
@@ -126,7 +134,7 @@ class BasicEquations(Scene):
 class ColoringEquations(Scene):
     #Grouping and coloring parts of equations
     def construct(self):
-        line1=TexMobject("\\text{The vector }", "\\vec{F}_{net}", "\\text{ is the net force on object of mass }")
+        line1=TexMobject(r"\text{The vector } \vec{F}_{net} \text{ is the net }",r"\text{force }",r"\text{on object of mass }")
         line1.set_color_by_tex("force", BLUE)
         line2=TexMobject("m", "\\text{ and acceleration }", "\\vec{a}", ".  ")
         line2.set_color_by_tex_to_color_map({
@@ -136,6 +144,8 @@ class ColoringEquations(Scene):
         sentence=VGroup(line1,line2)
         sentence.arrange_submobjects(DOWN, buff=MED_LARGE_BUFF)
         self.play(Write(sentence))
+
+
 
 class UsingBraces(Scene):
     #Using braces to group text together
@@ -194,7 +204,7 @@ class UsingBracesConcise(Scene):
 class PlotFunctions(GraphScene):
     CONFIG = {
         "x_min" : -10,
-        "x_max" : 10,
+        "x_max" : 10.3,
         "y_min" : -1.5,
         "y_max" : 1.5,
         "graph_origin" : ORIGIN ,
@@ -293,7 +303,7 @@ class DrawAnAxis(Scene):
         my_plane = NumberPlane(**self.plane_kwargs)
         my_plane.add(my_plane.get_axis_labels())
         self.add(my_plane)
-        self.wait()
+        #self.wait()
 
 class SimpleField(Scene):
     CONFIG = {
@@ -355,7 +365,6 @@ class FieldWithAxes(Scene):
         return Vector(efield).shift(point)
 
 class ExampleThreeD(ThreeDScene):
-    ### Broken in 3.7
     CONFIG = {
     "plane_kwargs" : {
         "color" : RED_B
@@ -363,7 +372,7 @@ class ExampleThreeD(ThreeDScene):
     "point_charge_loc" : 0.5*RIGHT-1.5*UP,
     }
     def construct(self):
-        self.set_camera_position(0, -np.pi/2)
+        #self.set_camera_position(0, -np.pi/2)  #Old code
         plane = NumberPlane(**self.plane_kwargs)
         plane.main_lines.fade(.9)
         plane.add(plane.get_axis_labels())
@@ -374,11 +383,12 @@ class ExampleThreeD(ThreeDScene):
             for y in np.arange(-5,5,1)
             ])
 
-
+        self.set_camera_orientation(phi=PI/3,gamma=PI/5)
         self.play(ShowCreation(field2D))
         self.wait()
-        self.move_camera(0.8*np.pi/2, -0.45*np.pi)
-        self.begin_ambient_camera_rotation()
+        self.move_camera(gamma=0)
+        self.move_camera(phi=3/4*PI, theta=-PI/2)
+        self.begin_ambient_camera_rotation(rate=0.1)
         self.wait(6)
 
     def calc_field2D(self,point):
@@ -603,3 +613,145 @@ class FieldOfMovingCharge(Scene):
             plus.scale(0.7)
             plus.move_to(self)
             self.add(plus)
+
+
+HEAD_INDEX   = 0
+BODY_INDEX   = 1
+ARMS_INDEX   = 2
+LEGS_INDEX   = 3
+
+
+class StickMan(SVGMobject):
+    CONFIG = {
+        "color" : BLUE_E,
+        "file_name_prefix": "stick_man",
+        "stroke_width" : 2,
+        "stroke_color" : WHITE,
+        "fill_opacity" : 1.0,
+        "height" : 3,
+    }
+    def __init__(self, mode = "plain", **kwargs):
+        digest_config(self, kwargs)
+        self.mode = mode
+        self.parts_named = False
+        try:
+            svg_file = os.path.join(
+                SVG_IMAGE_DIR,
+                "%s_%s.svg" % (self.file_name_prefix, mode)
+            )
+            SVGMobject.__init__(self, file_name=svg_file, **kwargs)
+        except:
+            warnings.warn("No %s design with mode %s" %
+                            (self.file_name_prefix, mode))
+            svg_file = os.path.join(
+                SVG_IMAGE_DIR,
+                "stick_man_plain.svg",
+            )
+            SVGMobject.__init__(self, mode="plain", file_name=svg_file, **kwargs)
+
+
+    def name_parts(self):
+        self.head = self.submobjects[HEAD_INDEX]
+        self.body = self.submobjects[BODY_INDEX]
+        self.arms = self.submobjects[ARMS_INDEX]
+        self.legs = self.submobjects[LEGS_INDEX]
+        self.parts_named = True
+
+    def init_colors(self):
+        SVGMobject.init_colors(self)
+        if not self.parts_named:
+            self.name_parts()
+        self.head.set_fill(self.color, opacity = 1)
+        self.body.set_fill(RED, opacity = 1)
+        self.arms.set_fill(YELLOW, opacity = 1)
+        self.legs.set_fill(BLUE, opacity = 1)
+        return self
+
+class Waving(Scene):
+    def construct(self):
+        start_man = StickMan()
+        plain_man = StickMan()
+        waving_man = StickMan("wave")
+
+        self.add(start_man)
+        self.wait()
+        self.play(Transform(start_man,waving_man))
+        self.play(Transform(start_man,plain_man))
+
+        self.wait()
+
+class CirclesAndSquares(SVGMobject):
+    CONFIG = {
+        "color" : BLUE_E,
+        "file_name_prefix": "circles_and_squares",
+        "stroke_width" : 2,
+        "stroke_color" : WHITE,
+        "fill_opacity" : 1.0,
+        "height" : 3,
+        "start_corner" : None,
+        "circle_index" : 0,
+        "line1_index" :1,
+        "line2_index" : 2,
+        "square1_index" : 3,
+        "square2_index" : 4,
+    }
+    def __init__(self, mode = "plain", **kwargs):
+        digest_config(self, kwargs)
+        self.mode = mode
+        self.parts_named = False
+        try:
+            svg_file = os.path.join(
+                SVG_IMAGE_DIR,
+                "%s_%s.svg" % (self.file_name_prefix, mode)
+            )
+            SVGMobject.__init__(self, file_name=svg_file, **kwargs)
+        except:
+            warnings.warn("No %s design with mode %s" %
+                            (self.file_name_prefix, mode))
+            svg_file = os.path.join(
+                SVG_IMAGE_DIR,
+                "circles_and_squares_plain.svg",
+            )
+            SVGMobject.__init__(self, mode="plain", file_name=svg_file, **kwargs)
+
+
+    def name_parts(self):
+        self.circle = self.submobjects[self.circle_index]
+        self.line1 = self.submobjects[self.line1_index]
+        self.line2 = self.submobjects[self.line2_index]
+        self.square1 = self.submobjects[self.square1_index]
+        self.square2 = self.submobjects[self.square2_index]
+        self.parts_named = True
+
+    def init_colors(self):
+        SVGMobject.init_colors(self)
+        self.name_parts()
+        self.circle.set_fill(RED, opacity = 1)
+        self.line1.set_fill(self.color, opacity = 0)
+        self.line2.set_fill(self.color, opacity = 0)
+        self.square1.set_fill(GREEN, opacity = 1)
+        self.square2.set_fill(BLUE, opacity = 1)
+        return self
+
+
+class SVGCircleAndSquare(Scene):
+    def construct(self):
+        thingy = CirclesAndSquares()
+
+        self.add(thingy)
+        self.wait()
+
+if __name__ == "__main__":
+    # Call this file at command line to make sure all scenes work with version of manim
+    # type "python manim_tutorial_P37.py" at command line to run all scenes in this file
+    #Must have "import os" and  "import pyclbr" at start of file to use this
+    ###Using Python class browser to determine which classes are defined in this file
+    module_name = 'manim_tutorial_P37'   #Name of current file
+    module_info = pyclbr.readmodule(module_name)
+
+    for item in module_info.values():
+        if item.module==module_name:
+            print(item.name)
+            os.system("python -m manim manim_tutorial_P37.py %s -l" % item.name)  #Does not play files
+
+
