@@ -407,7 +407,6 @@ class EFieldInThreeD(ThreeDScene):
     "point_charge_loc" : 0.5*RIGHT-1.5*UP,
     }
     def construct(self):
-        self.set_camera_position(0.1, -np.pi/2)
         plane = NumberPlane(**self.plane_kwargs)
         plane.main_lines.fade(.9)
         plane.add(plane.get_axis_labels())
