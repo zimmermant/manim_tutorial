@@ -386,7 +386,7 @@ class ExampleThreeD(ThreeDScene):
         self.set_camera_orientation(phi=PI/3,gamma=PI/5)
         self.play(ShowCreation(field2D))
         self.wait()
-        self.move_camera(gamma=0)
+        self.move_camera(gamma=0,run_time=1)
         self.move_camera(phi=3/4*PI, theta=-PI/2)
         self.begin_ambient_camera_rotation(rate=0.1)
         self.wait(6)
