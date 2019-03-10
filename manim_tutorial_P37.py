@@ -342,7 +342,7 @@ class FieldWithAxes(Scene):
     }
     def construct(self):
         plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        #plane.main_lines.fade(.9)  #doesn't work in most recent commit
         plane.add(plane.get_axis_labels())
         self.add(plane)
 
@@ -372,9 +372,8 @@ class ExampleThreeD(ThreeDScene):
     "point_charge_loc" : 0.5*RIGHT-1.5*UP,
     }
     def construct(self):
-        #self.set_camera_position(0, -np.pi/2)  #Old code
         plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        #plane.main_lines.fade(.9)   #Doesn't work in most recent commit
         plane.add(plane.get_axis_labels())
         self.add(plane)
 
@@ -386,8 +385,8 @@ class ExampleThreeD(ThreeDScene):
         self.set_camera_orientation(phi=PI/3,gamma=PI/5)
         self.play(ShowCreation(field2D))
         self.wait()
-        self.move_camera(gamma=0,run_time=1)
-        self.move_camera(phi=3/4*PI, theta=-PI/2)
+        #self.move_camera(gamma=0,run_time=1)   #Doesn't work in most recent commit
+        #self.move_camera(phi=3/4*PI, theta=-PI/2)   #Doesn't work in most recent commit
         self.begin_ambient_camera_rotation(rate=0.1)
         self.wait(6)
 
@@ -408,7 +407,7 @@ class EFieldInThreeD(ThreeDScene):
     }
     def construct(self):
         plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        #plane.main_lines.fade(.9)  #Doesn't work in most recent commit
         plane.add(plane.get_axis_labels())
         self.add(plane)
 
@@ -426,7 +425,7 @@ class EFieldInThreeD(ThreeDScene):
 
         self.play(ShowCreation(field3D))
         self.wait()
-        self.move_camera(0.8*np.pi/2, -0.45*np.pi)
+        #self.move_camera(0.8*np.pi/2, -0.45*np.pi)   #Doesn't work in most recent commit
         self.begin_ambient_camera_rotation()
         self.wait(6)
 
@@ -456,7 +455,7 @@ class MovingCharges(Scene):
     }
     def construct(self):
         plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        #plane.main_lines.fade(.9)  #Doesn't work in most recent commit
         plane.add(plane.get_axis_labels())
         self.add(plane)
 
@@ -534,7 +533,7 @@ class FieldOfMovingCharge(Scene):
     }
     def construct(self):
         plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        #plane.main_lines.fade(.9)   #Doesn't work in most recent commit
         plane.add(plane.get_axis_labels())
         self.add(plane)
 
