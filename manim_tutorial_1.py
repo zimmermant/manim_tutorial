@@ -6,23 +6,25 @@ class Shapes(Scene):
     #A few simple shapes
     #Python 2.7 version runs in Python 3.7 without changes
     def construct(self):
+
         circle = Circle()
         square = Square()
         line=Line(np.array([3,0,0]),np.array([5,0,0]))
         triangle=Polygon(np.array([0,0,0]),np.array([1,1,0]),np.array([1,-1,0]))
 
-        
-        self.play(ShowCreationThenFadeOut(circle))
+        self.add(line)
+        self.play(Create(circle))
         self.play(FadeOut(circle))
         self.play(GrowFromCenter(square))
         self.play(Transform(square,triangle))
-        self.add(line)
+
 
 class MoreShapes(Scene):
     #A few more simple shapes
     #2.7 version runs in 3.7 without any changes
     #Note: I fixed my 'play command not found' issue by installing sox
     def construct(self):
+
         circle = Circle(color=PURPLE_A)
         square = Square(fill_color=GOLD_B, fill_opacity=1, color=GOLD_A)
         square.move_to(UP+LEFT)
@@ -46,6 +48,7 @@ class MoreShapes(Scene):
 class MovingShapes(Scene):
     #Show the difference between .shift() and .move_to
     def construct(self):
+
         circle=Circle(color=TEAL_A)
         circle.move_to(LEFT)
         square=Circle()
@@ -56,13 +59,15 @@ class MovingShapes(Scene):
         self.play(ApplyMethod(circle.move_to,RIGHT+UP), ApplyMethod(square.shift,RIGHT+UP))
         self.play(ApplyMethod(circle.move_to,LEFT+UP), ApplyMethod(square.shift,LEFT+UP))
 
+
 class AddingText(Scene):
     #Adding text on the screen
     def construct(self):
-        my_first_text=Text("Writing with manim is fun")
-        second_line=Text("and easy to do!")
+
+        my_first_text=Tex("Writing with manim is fun")
+        second_line=Tex("and easy to do!")
         second_line.next_to(my_first_text,DOWN)
-        third_line=Text("for me and you!")
+        third_line=Tex("for me and you!")
         third_line.next_to(my_first_text,DOWN)
 
         self.add(my_first_text, second_line)
@@ -70,18 +75,19 @@ class AddingText(Scene):
         self.play(Transform(second_line,third_line))
         self.wait(2)
         second_line.shift(3*DOWN)
-        self.play(ApplyMethod(my_first_text.shift,3*UP))
+        self.play(ApplyMethod(my_first_text.shift,UP))
 
 
 class AddingMoreText(Scene):
     #Playing around with text properties
     def construct(self):
-        quote = Text("Imagination is more important than knowledge")
+
+        quote = Tex("Imagination is more important than knowledge")
         quote.set_color(RED)
         quote.to_edge(UP)
-        quote2 = Text("A person who never made a mistake never tried anything new")
+        quote2 = Tex("A person who never made a mistake never tried anything new")
         quote2.set_color(YELLOW)
-        author=Text("-Albert Einstein")
+        author=Tex("-Albert Einstein")
         author.scale(0.75)
         author.next_to(quote.get_corner(DOWN+RIGHT),DOWN)
 
@@ -92,9 +98,11 @@ class AddingMoreText(Scene):
         self.play(ApplyMethod(author.match_color,quote2),Transform(author,author.scale(1)))
         self.play(FadeOut(quote))
 
+
 class RotateAndHighlight(Scene):
     #Rotation of text and highlighting with surrounding geometries
     def construct(self):
+
         square=Square(side_length=5,fill_color=YELLOW, fill_opacity=1)
         label=Text("Text at an angle")
         label.bg=BackgroundRectangle(label,fill_opacity=1)
@@ -114,23 +122,27 @@ class RotateAndHighlight(Scene):
         self.play(FadeIn(label2_group))
         self.play(FadeIn(label3))
 
+
 class BasicEquations(Scene):
     #A short script showing how to use Latex commands
     def construct(self):
-        eq1=Text("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
+
+        eq1=Tex("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
         eq1.shift(2*UP)
-        eq2=Tex("\\vec{F}_{net} = \\sum_i \\vec{F}_i")
+        eq2=Tex("$\\vec{F}_{net} = \\sum_i \\vec{F}_i$")
         eq2.shift(2*DOWN)
 
         self.play(Write(eq1))
         self.play(Write(eq2))
 
+
 class ColoringEquations(Scene):
     #Grouping and coloring parts of equations
     def construct(self):
-        line1=Tex("\\text{The vector }", "\\vec{F}_{net}", "\\text{ is the net force on object of mass }")
+
+        line1=Tex("\\text{The vector }", "$\\vec{F}_{net}$", "\\text{ is the net force on object of mass }")
         line1.set_color_by_tex("force", BLUE)
-        line2=Tex("m", "\\text{ and acceleration }", "\\vec{a}", ".  ")
+        line2=Tex("m", "\\text{ and acceleration }", "$\\vec{a}$", ".  ")
         line2.set_color_by_tex_to_color_map({
             "m": YELLOW,
             "{a}": RED
@@ -139,9 +151,11 @@ class ColoringEquations(Scene):
         sentence.arrange_submobjects(DOWN, buff=MED_LARGE_BUFF)
         self.play(Write(sentence))
 
+
 class UsingBraces(Scene):
     #Using braces to group text together
     def construct(self):
+
         eq1A = Text("4x + 3y")
         eq1B = Text("=")
         eq1C = Text("0")
@@ -156,7 +170,6 @@ class UsingBraces(Scene):
         eq2A.align_to(eq1A,LEFT)
         eq2B.align_to(eq1B,LEFT)
         eq2C.align_to(eq1C,LEFT)
-
         eq_group=VGroup(eq1A,eq2A)
         braces=Brace(eq_group,LEFT)
         eq_text = braces.get_text("A pair of equations")
@@ -169,6 +182,7 @@ class UsingBraces(Scene):
 class UsingBracesConcise(Scene):
     #A more concise block of code with all columns aligned
     def construct(self):
+
         eq1_text=["4","x","+","3","y","=","0"]
         eq2_text=["5","x","-","2","y","=","3"]
         eq1_mob=Tex(*eq1_text)
@@ -193,7 +207,12 @@ class UsingBracesConcise(Scene):
         self.play(Write(eq1),Write(eq2))
         self.play(GrowFromCenter(braces),Write(eq_text))
 
+
+'''
+----------- Currently Not Working -----------
+
 class PlotFunctions(GraphScene):
+    
     CONFIG = {
         "x_min" : -10,
         "x_max" : 10,
@@ -204,7 +223,7 @@ class PlotFunctions(GraphScene):
         "axes_color" : GREEN,
         "x_labeled_nums" :range(-10,12,2),
 
-    }
+    }   
     def construct(self):
         self.setup_axes(animate=True)
         func_graph=self.get_graph(self.func_to_graph,self.function_color)
@@ -212,14 +231,14 @@ class PlotFunctions(GraphScene):
         vert_line = self.get_vertical_line_to_graph(TAU,func_graph,color=YELLOW)
         graph_lab = self.get_graph_label(func_graph, label = "\\cos(x)")
         graph_lab2=self.get_graph_label(func_graph2,label = "\\sin(x)", x_val=-10, direction=UP/2)
-        two_pi = Tex("x = 2 \\pi")
+        two_pi = TexMobject("x = 2 \\pi")
         label_coord = self.input_to_graph_point(TAU,func_graph)
         two_pi.next_to(label_coord,RIGHT+UP)
 
 
 
-        self.play(ShowCreationThenFadeOut(func_graph),ShowCreationThenFadeOut(func_graph2))
-        self.play(ShowCreationThenFadeOut(vert_line), ShowCreationThenFadeOut(graph_lab), ShowCreationThenFadeOut(graph_lab2),ShowCreationThenFadeOut(two_pi))
+        self.play(ShowCreation(func_graph),ShowCreation(func_graph2))
+        self.play(ShowCreation(vert_line), ShowCreation(graph_lab), ShowCreation(graph_lab2),ShowCreation(two_pi))
 
 
     def func_to_graph(self,x):
@@ -229,82 +248,95 @@ class PlotFunctions(GraphScene):
         return np.sin(x)
 
 
+'''
+'''
+----------- Currently Not Working -----------
+
 class ExampleApproximation(GraphScene):
-    CONFIG = {
-        "function" : lambda x : np.cos(x),
-        "function_color" : BLUE,
-        "taylor" : [lambda x: 1, lambda x: 1-x**2/2, lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4), lambda x: 1-x**2/2+x**4/math.factorial(4)-x**6/math.factorial(6),
-        lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4)-x**6/math.factorial(6)+x**8/math.factorial(8), lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4)-x**6/math.factorial(6)+x**8/math.factorial(8) - x**10/math.factorial(10)],
-        "center_point" : 0,
-        "approximation_color" : GREEN,
-        "x_min" : -10,
-        "x_max" : 10,
-        "y_min" : -1,
-        "y_max" : 1,
-        "graph_origin" : ORIGIN ,
-        "x_labeled_nums" :range(-10,12,2),
+    
+        CONFIG = {
+            "function": lambda x: np.cos(x),
+            "function_color": BLUE,
+            "taylor": [lambda x: 1, lambda x: 1 - x ** 2 / 2,
+                       lambda x: 1 - x ** 2 / math.factorial(2) + x ** 4 / math.factorial(4),
+                       lambda x: 1 - x ** 2 / 2 + x ** 4 / math.factorial(4) - x ** 6 / math.factorial(6),
+                       lambda x: 1 - x ** 2 / math.factorial(2) + x ** 4 / math.factorial(4) - x ** 6 / math.factorial(
+                           6) + x ** 8 / math.factorial(8),
+                       lambda x: 1 - x ** 2 / math.factorial(2) + x ** 4 / math.factorial(4) - x ** 6 / math.factorial(
+                           6) + x ** 8 / math.factorial(8) - x ** 10 / math.factorial(10)],
+            "center_point": 0,
+            "approximation_color": GREEN,
+            "x_min": -10,
+            "x_max": 10,
+            "y_min": -1,
+            "y_max": 1,
+            "graph_origin": ORIGIN,
+            "x_labeled_nums": range(-10, 12, 2),
 
-    }
-    def construct(self):
-        self.setup_axes(animate=True)
-        func_graph = self.get_graph(
-            self.function,
-            self.function_color,
-        )
-        approx_graphs = [
-            self.get_graph(
-                f,
-                self.approximation_color
+        }
+
+        def construct(self):
+            self.setup_axes(animate=True)
+            func_graph = self.get_graph(
+                self.function,
+                self.function_color,
             )
-            for f in self.taylor
-        ]
+            approx_graphs = [
+                self.get_graph(
+                    f,
+                    self.approximation_color
+                )
+                for f in self.taylor
+            ]
 
-        term_num = [
-            Tex("n = " + str(n),aligned_edge=UP)
-            for n in range(0,8)]
-        #[t.to_edge(BOTTOM,buff=SMALL_BUFF) for t in term_num]
+            term_num = [
+                TexMobject("n = " + str(n), aligned_edge=TOP)
+                for n in range(0, 8)]
+            # [t.to_edge(BOTTOM,buff=SMALL_BUFF) for t in term_num]
 
+            # term = TexMobject("")
+            # term.to_edge(BOTTOM,buff=SMALL_BUFF)
+            term = VectorizedPoint(3 * DOWN)
 
-        #term = Tex("")
-        #term.to_edge(BOTTOM,buff=SMALL_BUFF)
-        term = VectorizedPoint(3*DOWN)
+            approx_graph = VectorizedPoint(
+                self.input_to_graph_point(self.center_point, func_graph)
+            )
 
-        approx_graph = VectorizedPoint(
-            self.input_to_graph_point(self.center_point, func_graph)
-        )
-
-        self.play(
-            ShowCreationThenFadeOut(func_graph),
-        )
-        for n,graph in enumerate(approx_graphs):
             self.play(
-                Transform(approx_graph, graph, run_time = 2),
-                Transform(term,term_num[n])
+                ShowCreation(func_graph),
             )
-            self.wait()
-
+            for n, graph in enumerate(approx_graphs):
+                self.play(
+                    Transform(approx_graph, graph, run_time=2),
+                    Transform(term, term_num[n])
+                )
+                self.wait()
+'''
 
 class DrawAnAxis(Scene):
-    CONFIG = { "plane_kwargs" : {
-        "x_line_frequency" : 2,
-        "y_line_frequency" :2
-        }
-    }
+
+    config.x_line_frequency = 2
+    config.y_line_frequency = 2
 
     def construct(self):
-        my_plane = NumberPlane(**self.plane_kwargs)
+
+        my_plane = NumberPlane()
         my_plane.add(my_plane.get_axis_labels())
         self.add(my_plane)
         self.wait()
 
+
 class SimpleField(Scene):
+
     CONFIG = {
     "plane_kwargs" : {
         "color" : RED
         },
     }
+
     def construct(self):
-        plane = NumberPlane(**self.plane_kwargs) #Create axes and grid
+
+        plane = NumberPlane() #Create axes and grid
         plane.add(plane.get_axis_labels())  #add x and y label
         self.add(plane)  #Place grid on screen
 
@@ -320,34 +352,35 @@ class SimpleField(Scene):
             vec_field.append(result)   #Append to list
 
         draw_field = VGroup(*vec_field)   #Pass list of vectors to create a VGroup
-
-
-        self.play(ShowCreationThenFadeOut(draw_field))   #Draw VGroup on screen
+        self.play(Create(draw_field))   #Draw VGroup on screen
 
 
 class FieldWithAxes(Scene):
+
+    point_charge_loc = 0.5*RIGHT-1.5*UP
+
     CONFIG = {
     "plane_kwargs" : {
         "color" : RED_B
         },
     "point_charge_loc" : 0.5*RIGHT-1.5*UP,
     }
+
     def construct(self):
-        plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+
+        plane = NumberPlane()
+        plane.faded_line_ratio = 0.9
         plane.add(plane.get_axis_labels())
         self.add(plane)
-
         field = VGroup(*[self.calc_field(x*RIGHT+y*UP)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
             ])
-
-        self.play(ShowCreationThenFadeOut(field))
-
+        self.play(Create(field))
 
     def calc_field(self,point):
         #This calculates the field at a single point.
+
         x,y = point[:2]
         Rx,Ry = self.point_charge_loc[:2]
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
@@ -357,33 +390,27 @@ class FieldWithAxes(Scene):
         return Vector(efield).shift(point)
 
 class ExampleThreeD(ThreeDScene):
-    ### Broken in 3.7
-    CONFIG = {
-    "plane_kwargs" : {
-        "color" : RED_B
-        },
-    "point_charge_loc" : 0.5*RIGHT-1.5*UP,
-    }
+
+    point_charge_loc = 0.5 * RIGHT - 1.5 * UP
+
     def construct(self):
-        self.set_camera_position(0, -np.pi/2)
-        plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        self.set_camera_orientation(0, -np.pi/2)
+        plane = NumberPlane()
+        plane.faded_line_ratio = 0.9
         plane.add(plane.get_axis_labels())
         self.add(plane)
-
         field2D = VGroup(*[self.calc_field2D(x*RIGHT+y*UP)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
             ])
-
-
-        self.play(ShowCreationThenFadeOut(field2D))
+        self.play(Create(field2D))
         self.wait()
         self.move_camera(0.8*np.pi/2, -0.45*np.pi)
         self.begin_ambient_camera_rotation()
         self.wait(6)
 
     def calc_field2D(self,point):
+
         x,y = point[:2]
         Rx,Ry = self.point_charge_loc[:2]
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
@@ -392,39 +419,31 @@ class ExampleThreeD(ThreeDScene):
 
 
 class EFieldInThreeD(ThreeDScene):
-    CONFIG = {
-    "plane_kwargs" : {
-        "color" : RED_B
-        },
-    "point_charge_loc" : 0.5*RIGHT-1.5*UP,
-    }
+
+    point_charge_loc = 0.5*RIGHT-1.5*UP
+
     def construct(self):
-        self.set_camera_position(0.1, -np.pi/2)
-        plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+        self.set_camera_orientation(0.1, -np.pi/2)
+        plane = NumberPlane()
+        plane.faded_line_ratio = 0.9
         plane.add(plane.get_axis_labels())
         self.add(plane)
-
         field2D = VGroup(*[self.calc_field2D(x*RIGHT+y*UP)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
             ])
-
         field3D = VGroup(*[self.calc_field3D(x*RIGHT+y*UP+z*OUT)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
             for z in np.arange(-5,5,1)])
-
-
-
-        self.play(ShowCreationThenFadeOut(field3D))
+        self.play(Create(field3D))
         self.wait()
         self.move_camera(0.8*np.pi/2, -0.45*np.pi)
         self.begin_ambient_camera_rotation()
         self.wait(6)
 
-
     def calc_field2D(self,point):
+
         x,y = point[:2]
         Rx,Ry = self.point_charge_loc[:2]
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
@@ -432,6 +451,7 @@ class EFieldInThreeD(ThreeDScene):
         return Vector(efield).shift(point)
 
     def calc_field3D(self,point):
+
         x,y,z = point
         Rx,Ry,Rz = self.point_charge_loc
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2+(z-Rz)**2)
@@ -441,18 +461,22 @@ class EFieldInThreeD(ThreeDScene):
 
 
 class MovingCharges(Scene):
+
+    point_charge_loc = 0.5*RIGHT-1.5*UP
+
     CONFIG = {
     "plane_kwargs" : {
         "color" : RED_B
         },
     "point_charge_loc" : 0.5*RIGHT-1.5*UP,
     }
+
     def construct(self):
-        plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+
+        plane = NumberPlane()
+        plane.faded_line_ratio = 0.9
         plane.add(plane.get_axis_labels())
         self.add(plane)
-
         field = VGroup(*[self.calc_field(x*RIGHT+y*UP)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
@@ -460,10 +484,11 @@ class MovingCharges(Scene):
         self.field=field
         source_charge = self.Positron().move_to(self.point_charge_loc)
         self.play(FadeIn(source_charge))
-        self.play(ShowCreationThenFadeOut(field))
+        self.play(Create(field))
         self.moving_charge()
 
     def calc_field(self,point):
+
         x,y = point[:2]
         Rx,Ry = self.point_charge_loc[:2]
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2)
@@ -471,6 +496,7 @@ class MovingCharges(Scene):
         return Vector(efield).shift(point)
 
     def moving_charge(self):
+
         numb_charges=4
         possible_points = [v.get_start() for v in self.field]
         points = random.sample(possible_points, numb_charges)
@@ -504,6 +530,7 @@ class MovingCharges(Scene):
 
 
     class Positron(Circle):
+
         CONFIG = {
         "radius" : 0.2,
         "stroke_width" : 3,
@@ -511,26 +538,33 @@ class MovingCharges(Scene):
         "fill_color" : RED,
         "fill_opacity" : 0.5,
         }
+
         def __init__(self, **kwargs):
+
             Circle.__init__(self, **kwargs)
             plus = Tex("+")
             plus.scale(0.7)
             plus.move_to(self)
             self.add(plus)
 
+
 class FieldOfMovingCharge(Scene):
+
+    point_charge_start_loc = 5.5 * LEFT - 1.5 * UP
+
     CONFIG = {
     "plane_kwargs" : {
         "color" : RED_B
         },
     "point_charge_start_loc" : 5.5*LEFT-1.5*UP,
     }
+
     def construct(self):
-        plane = NumberPlane(**self.plane_kwargs)
-        plane.main_lines.fade(.9)
+
+        plane = NumberPlane()
+        plane.faded_line_ratio = 0.9
         plane.add(plane.get_axis_labels())
         self.add(plane)
-
         field = VGroup(*[self.create_vect_field(self.point_charge_start_loc,x*RIGHT+y*UP)
             for x in np.arange(-9,9,1)
             for y in np.arange(-5,5,1)
@@ -539,13 +573,15 @@ class FieldOfMovingCharge(Scene):
         self.source_charge = self.Positron().move_to(self.point_charge_start_loc)
         self.source_charge.velocity = np.array((1,0,0))
         self.play(FadeIn(self.source_charge))
-        self.play(ShowCreationThenFadeOut(field))
+        self.play(Create(field))
         self.moving_charge()
 
     def create_vect_field(self,source_charge,observation_point):
+
         return Vector(self.calc_field(source_charge,observation_point)).shift(observation_point)
 
     def calc_field(self,source_point,observation_point):
+
         x,y,z = observation_point
         Rx,Ry,Rz = source_point
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2 + (z-Rz)**2)
@@ -555,9 +591,8 @@ class FieldOfMovingCharge(Scene):
             efield = (observation_point - source_point)/r**3
         return efield
 
-
-
     def moving_charge(self):
+
         numb_charges=3
         possible_points = [v.get_start() for v in self.field]
         points = random.sample(possible_points, numb_charges)
@@ -573,8 +608,8 @@ class FieldOfMovingCharge(Scene):
         self.always_continually_update = True
         self.wait(10)
 
-
     def continual_update(self, *args, **kwargs):
+
         Scene.continual_update(self, *args, **kwargs)
         if hasattr(self, "moving_particles"):
             dt = self.frame_duration
@@ -592,6 +627,7 @@ class FieldOfMovingCharge(Scene):
 
 
     class Positron(Circle):
+
         CONFIG = {
         "radius" : 0.2,
         "stroke_width" : 3,
@@ -599,7 +635,9 @@ class FieldOfMovingCharge(Scene):
         "fill_color" : RED,
         "fill_opacity" : 0.5,
         }
+
         def __init__(self, **kwargs):
+
             Circle.__init__(self, **kwargs)
             plus = Tex("+")
             plus.scale(0.7)
