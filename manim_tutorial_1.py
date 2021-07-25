@@ -1,4 +1,6 @@
-from big_ol_pile_of_manim_imports import *
+from manim import *
+import math
+import random
 
 class Shapes(Scene):
     #A few simple shapes
@@ -10,7 +12,7 @@ class Shapes(Scene):
         triangle=Polygon(np.array([0,0,0]),np.array([1,1,0]),np.array([1,-1,0]))
 
         
-        self.play(ShowCreation(circle))
+        self.play(ShowCreationThenFadeOut(circle))
         self.play(FadeOut(circle))
         self.play(GrowFromCenter(square))
         self.play(Transform(square,triangle))
@@ -57,10 +59,10 @@ class MovingShapes(Scene):
 class AddingText(Scene):
     #Adding text on the screen
     def construct(self):
-        my_first_text=TextMobject("Writing with manim is fun")
-        second_line=TextMobject("and easy to do!")
+        my_first_text=Text("Writing with manim is fun")
+        second_line=Text("and easy to do!")
         second_line.next_to(my_first_text,DOWN)
-        third_line=TextMobject("for me and you!")
+        third_line=Text("for me and you!")
         third_line.next_to(my_first_text,DOWN)
 
         self.add(my_first_text, second_line)
@@ -74,12 +76,12 @@ class AddingText(Scene):
 class AddingMoreText(Scene):
     #Playing around with text properties
     def construct(self):
-        quote = TextMobject("Imagination is more important than knowledge")
+        quote = Text("Imagination is more important than knowledge")
         quote.set_color(RED)
         quote.to_edge(UP)
-        quote2 = TextMobject("A person who never made a mistake never tried anything new")
+        quote2 = Text("A person who never made a mistake never tried anything new")
         quote2.set_color(YELLOW)
-        author=TextMobject("-Albert Einstein")
+        author=Text("-Albert Einstein")
         author.scale(0.75)
         author.next_to(quote.get_corner(DOWN+RIGHT),DOWN)
 
@@ -94,15 +96,15 @@ class RotateAndHighlight(Scene):
     #Rotation of text and highlighting with surrounding geometries
     def construct(self):
         square=Square(side_length=5,fill_color=YELLOW, fill_opacity=1)
-        label=TextMobject("Text at an angle")
+        label=Text("Text at an angle")
         label.bg=BackgroundRectangle(label,fill_opacity=1)
         label_group=VGroup(label.bg,label)  #Order matters
         label_group.rotate(TAU/8)
-        label2=TextMobject("Boxed text",color=BLACK)
+        label2=Text("Boxed text",color=BLACK)
         label2.bg=SurroundingRectangle(label2,color=BLUE,fill_color=RED, fill_opacity=.5)
         label2_group=VGroup(label2,label2.bg)
         label2_group.next_to(label_group,DOWN)
-        label3=TextMobject("Rainbow")
+        label3=Text("Rainbow")
         label3.scale(2)
         label3.set_color_by_gradient(RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE)
         label3.to_edge(DOWN)
@@ -115,9 +117,9 @@ class RotateAndHighlight(Scene):
 class BasicEquations(Scene):
     #A short script showing how to use Latex commands
     def construct(self):
-        eq1=TextMobject("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
+        eq1=Text("$\\vec{X}_0 \\cdot \\vec{Y}_1 = 3$")
         eq1.shift(2*UP)
-        eq2=TexMobject("\\vec{F}_{net} = \\sum_i \\vec{F}_i")
+        eq2=Tex("\\vec{F}_{net} = \\sum_i \\vec{F}_i")
         eq2.shift(2*DOWN)
 
         self.play(Write(eq1))
@@ -126,9 +128,9 @@ class BasicEquations(Scene):
 class ColoringEquations(Scene):
     #Grouping and coloring parts of equations
     def construct(self):
-        line1=TexMobject("\\text{The vector }", "\\vec{F}_{net}", "\\text{ is the net force on object of mass }")
+        line1=Tex("\\text{The vector }", "\\vec{F}_{net}", "\\text{ is the net force on object of mass }")
         line1.set_color_by_tex("force", BLUE)
-        line2=TexMobject("m", "\\text{ and acceleration }", "\\vec{a}", ".  ")
+        line2=Tex("m", "\\text{ and acceleration }", "\\vec{a}", ".  ")
         line2.set_color_by_tex_to_color_map({
             "m": YELLOW,
             "{a}": RED
@@ -140,12 +142,12 @@ class ColoringEquations(Scene):
 class UsingBraces(Scene):
     #Using braces to group text together
     def construct(self):
-        eq1A = TextMobject("4x + 3y")
-        eq1B = TextMobject("=")
-        eq1C = TextMobject("0")
-        eq2A = TextMobject("5x -2y")
-        eq2B = TextMobject("=")
-        eq2C = TextMobject("3")
+        eq1A = Text("4x + 3y")
+        eq1B = Text("=")
+        eq1C = Text("0")
+        eq2A = Text("5x -2y")
+        eq2B = Text("=")
+        eq2C = Text("3")
         eq1B.next_to(eq1A,RIGHT)
         eq1C.next_to(eq1B,RIGHT)
         eq2A.shift(DOWN)
@@ -169,8 +171,8 @@ class UsingBracesConcise(Scene):
     def construct(self):
         eq1_text=["4","x","+","3","y","=","0"]
         eq2_text=["5","x","-","2","y","=","3"]
-        eq1_mob=TexMobject(*eq1_text)
-        eq2_mob=TexMobject(*eq2_text)
+        eq1_mob=Tex(*eq1_text)
+        eq2_mob=Tex(*eq2_text)
         eq1_mob.set_color_by_tex_to_color_map({
             "x":RED_B,
             "y":GREEN_C
@@ -202,7 +204,7 @@ class PlotFunctions(GraphScene):
         "axes_color" : GREEN,
         "x_labeled_nums" :range(-10,12,2),
 
-    }   
+    }
     def construct(self):
         self.setup_axes(animate=True)
         func_graph=self.get_graph(self.func_to_graph,self.function_color)
@@ -210,14 +212,14 @@ class PlotFunctions(GraphScene):
         vert_line = self.get_vertical_line_to_graph(TAU,func_graph,color=YELLOW)
         graph_lab = self.get_graph_label(func_graph, label = "\\cos(x)")
         graph_lab2=self.get_graph_label(func_graph2,label = "\\sin(x)", x_val=-10, direction=UP/2)
-        two_pi = TexMobject("x = 2 \\pi")
+        two_pi = Tex("x = 2 \\pi")
         label_coord = self.input_to_graph_point(TAU,func_graph)
         two_pi.next_to(label_coord,RIGHT+UP)
 
 
 
-        self.play(ShowCreation(func_graph),ShowCreation(func_graph2))
-        self.play(ShowCreation(vert_line), ShowCreation(graph_lab), ShowCreation(graph_lab2),ShowCreation(two_pi))
+        self.play(ShowCreationThenFadeOut(func_graph),ShowCreationThenFadeOut(func_graph2))
+        self.play(ShowCreationThenFadeOut(vert_line), ShowCreationThenFadeOut(graph_lab), ShowCreationThenFadeOut(graph_lab2),ShowCreationThenFadeOut(two_pi))
 
 
     def func_to_graph(self,x):
@@ -229,7 +231,7 @@ class PlotFunctions(GraphScene):
 
 class ExampleApproximation(GraphScene):
     CONFIG = {
-        "function" : lambda x : np.cos(x), 
+        "function" : lambda x : np.cos(x),
         "function_color" : BLUE,
         "taylor" : [lambda x: 1, lambda x: 1-x**2/2, lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4), lambda x: 1-x**2/2+x**4/math.factorial(4)-x**6/math.factorial(6),
         lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4)-x**6/math.factorial(6)+x**8/math.factorial(8), lambda x: 1-x**2/math.factorial(2)+x**4/math.factorial(4)-x**6/math.factorial(6)+x**8/math.factorial(8) - x**10/math.factorial(10)],
@@ -258,12 +260,12 @@ class ExampleApproximation(GraphScene):
         ]
 
         term_num = [
-            TexMobject("n = " + str(n),aligned_edge=TOP)
+            Tex("n = " + str(n),aligned_edge=UP)
             for n in range(0,8)]
         #[t.to_edge(BOTTOM,buff=SMALL_BUFF) for t in term_num]
 
 
-        #term = TexMobject("")
+        #term = Tex("")
         #term.to_edge(BOTTOM,buff=SMALL_BUFF)
         term = VectorizedPoint(3*DOWN)
 
@@ -272,7 +274,7 @@ class ExampleApproximation(GraphScene):
         )
 
         self.play(
-            ShowCreation(func_graph),
+            ShowCreationThenFadeOut(func_graph),
         )
         for n,graph in enumerate(approx_graphs):
             self.play(
@@ -283,7 +285,7 @@ class ExampleApproximation(GraphScene):
 
 
 class DrawAnAxis(Scene):
-    CONFIG = { "plane_kwargs" : { 
+    CONFIG = { "plane_kwargs" : {
         "x_line_frequency" : 2,
         "y_line_frequency" :2
         }
@@ -320,7 +322,7 @@ class SimpleField(Scene):
         draw_field = VGroup(*vec_field)   #Pass list of vectors to create a VGroup
 
 
-        self.play(ShowCreation(draw_field))   #Draw VGroup on screen
+        self.play(ShowCreationThenFadeOut(draw_field))   #Draw VGroup on screen
 
 
 class FieldWithAxes(Scene):
@@ -341,7 +343,7 @@ class FieldWithAxes(Scene):
             for y in np.arange(-5,5,1)
             ])
 
-        self.play(ShowCreation(field))
+        self.play(ShowCreationThenFadeOut(field))
 
 
     def calc_field(self,point):
@@ -375,7 +377,7 @@ class ExampleThreeD(ThreeDScene):
             ])
 
 
-        self.play(ShowCreation(field2D))
+        self.play(ShowCreationThenFadeOut(field2D))
         self.wait()
         self.move_camera(0.8*np.pi/2, -0.45*np.pi)
         self.begin_ambient_camera_rotation()
@@ -415,7 +417,7 @@ class EFieldInThreeD(ThreeDScene):
 
 
 
-        self.play(ShowCreation(field3D))
+        self.play(ShowCreationThenFadeOut(field3D))
         self.wait()
         self.move_camera(0.8*np.pi/2, -0.45*np.pi)
         self.begin_ambient_camera_rotation()
@@ -458,7 +460,7 @@ class MovingCharges(Scene):
         self.field=field
         source_charge = self.Positron().move_to(self.point_charge_loc)
         self.play(FadeIn(source_charge))
-        self.play(ShowCreation(field))
+        self.play(ShowCreationThenFadeOut(field))
         self.moving_charge()
 
     def calc_field(self,point):
@@ -511,7 +513,7 @@ class MovingCharges(Scene):
         }
         def __init__(self, **kwargs):
             Circle.__init__(self, **kwargs)
-            plus = TexMobject("+")
+            plus = Tex("+")
             plus.scale(0.7)
             plus.move_to(self)
             self.add(plus)
@@ -537,7 +539,7 @@ class FieldOfMovingCharge(Scene):
         self.source_charge = self.Positron().move_to(self.point_charge_start_loc)
         self.source_charge.velocity = np.array((1,0,0))
         self.play(FadeIn(self.source_charge))
-        self.play(ShowCreation(field))
+        self.play(ShowCreationThenFadeOut(field))
         self.moving_charge()
 
     def create_vect_field(self,source_charge,observation_point):
@@ -548,7 +550,7 @@ class FieldOfMovingCharge(Scene):
         Rx,Ry,Rz = source_point
         r = math.sqrt((x-Rx)**2 + (y-Ry)**2 + (z-Rz)**2)
         if r<0.0000001:   #Prevent divide by zero
-            efield = np.array((0,0,0))  
+            efield = np.array((0,0,0))
         else:
             efield = (observation_point - source_point)/r**3
         return efield
@@ -599,7 +601,7 @@ class FieldOfMovingCharge(Scene):
         }
         def __init__(self, **kwargs):
             Circle.__init__(self, **kwargs)
-            plus = TexMobject("+")
+            plus = Tex("+")
             plus.scale(0.7)
             plus.move_to(self)
             self.add(plus)
